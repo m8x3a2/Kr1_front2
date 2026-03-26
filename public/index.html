@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин электроники</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .search-panel {
+            background: #e9ecef;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #ccc;
+        }
+
+        .search-panel input {
+            width: 60%;
+            padding: 12px;
+            border-radius: 25px;
+            border: 1px solid #aaa;
+            font-size: 16px;
+        }
+
+        .admin-panel {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .admin-panel input {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="search-panel">
+        <input type="text" id="searchInput" placeholder="Поиск по названию или ID..." oninput="filterProducts()">
+    </div>
+
+    <div class="admin-panel">
+        <button onclick="document.getElementById('addForm').style.display='block'">Добавить товар</button>
+        <div id="addForm" style="display:none; margin-top:10px;">
+            <input type="text" id="pName" placeholder="Название">
+            <input type="text" id="pCost" placeholder="Цена">
+            <input type="text" id="pImg" placeholder="images/photo.png">
+            <button onclick="addProduct()">Сохранить</button>
+            <button onclick="document.getElementById('addForm').style.display='none'">Отмена</button>
+        </div>
+    </div>
+
+    <div class="product-grid" id="productGrid"></div>
+
+    <script>
+        let allProducts = []; // Хранилище для всех товаров с сервера
+
+        // Загрузка товаров
+        async function loadProducts() {
+            const response = await fetch('/api/products');
+            allProducts = await response.json();
+            renderProducts(allProducts);
+        }
+
+        // Функция отрисовки (рендеринга) карточек
+        function renderProducts(list) {
+            const grid = document.getElementById('productGrid');
+            if (list.length === 0) {
+                grid.innerHTML = "<p>Ничего не найдено</p>";
+                return;
+            }
+
+            grid.innerHTML = list.map(p => `
+            <div class="product-card">
+                <img src="${p.img}" alt="${p.name}" class="product-card__image">
+                <div class="product-card__content">
+                    <small>ID: ${p.id}</small>
+                    <h2 class="product-card__title">${p.name}</h2>
+                    <p class="product-card__description">${p.desc}</p>
+                    <p class="product-card__cost">${p.cost}</p>
+                    <button class="product-card__btn">В корзину</button>
+                    <div style="margin-top: 15px; display:flex; gap:15px; font-size:13px;">
+                        <span onclick="editProduct(${p.id})" style="color:blue; cursor:pointer;">Редактировать</span>
+                        <span onclick="deleteProduct(${p.id})" style="color:red; cursor:pointer;">Удалить</span>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        }
+
+        // ЛОГИКА ПОИСКА
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+
+            const filtered = allProducts.filter(p => {
+                const nameMatch = p.name.toLowerCase().includes(query);
+                const idMatch = p.id.toString().includes(query);
+                return nameMatch || idMatch;
+            });
+
+            renderProducts(filtered);
+        }
+
+        // Добавление через API (Create)
+        async function addProduct() {
+            const name = document.getElementById('pName').value;
+            const cost = document.getElementById('pCost').value;
+            const img = document.getElementById('pImg').value;
+
+            if(!name || !cost) return alert("Заполните название и цену");
+
+            await fetch('/api/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, cost, img, desc: "Новое поступление" })
+            });
+
+            document.getElementById('addForm').style.display = 'none';
+            loadProducts(); // Перерисовать список
+        }
+
+        async function editProduct(id) {
+            const n = prompt("Новое название:");
+            const c = prompt("Новая цена:");
+            if (n || c) {
+                await fetch(`/api/products/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: n, cost: c })
+                });
+                loadProducts();
+            }
+        }
+
+        // Удаление через API (Delete)
+        async function deleteProduct(id) {
+            if (confirm(`Удалить товар с ID ${id}?`)) {
+                await fetch(`/api/products/${id}`, { method: 'DELETE' });
+                loadProducts();
+            }
+        }
+
+        // Запуск после всей загрузки страницы
+        window.onload = loadProducts;
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+// ПОДКЛЮЧЕНИЕ МОДУЛЕЙ
+@use "sass:color";
+
+// переменные
+$primary-color: #2c3e50;
+$accent-color: #e67e22;
+$border-radius: 12px;
+$font-stack: 'Segoe UI', Tahoma, sans-serif;
+
+// миксины
+// Миксин для оформления кнопок
+@mixin button-style($bg-color) {
+    padding: 10px 20px;
+    background-color: $bg-color;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+    &:hover {
+        background-color: color.adjust($bg-color, $lightness: -10%);
+    }
+}
+
+// Вложенная структура
+.product-card {
+    width: 270px;
+    font-family: $font-stack;
+    border-radius: $border-radius;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);  // Мягкая тень для объёма
+    overflow: hidden;  // Обрезает содержимое за пределами скруглённых углов
+    border: 1px solid #eee;
+
+    display: flex;
+    flex-direction: column;  // Главная ось — вертикальная
+
+    &__image {
+       width: 100%;
+       display: block;  // Убирает лишнее пространство под изображением
+    }
+
+    &__content {
+        flex: 1;  // Занимает всё свободное пространство
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;  // Прижимает дочерние элементы к НИЗУ контейнера
+        padding: 20px;
+    }
+
+    &__title {
+        margin: 0 0 10px;
+        font-size: 1.4rem;  // Адаптивный размер от корневого элемента
+        color: $primary-color;
+    }
+
+    &__description {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.5;  // Улучшенная читаемость, делая больше интервал между строками
+        margin-bottom: 20px;
+    }
+
+    &__cost {
+        margin-bottom: 20px;
+        font-size: 1.6rem;
+        color: #2d6900;
+    }
+
+    &__btn {
+        @include button-style($accent-color);  // Подключение кастомного миксина
+        width: 100%;
+    }
+
+    @media (max-width: 360px) {
+        width: 100%;
+    }
+}
+
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    padding: 20px;
+
+    @media (max-width: 768px) {
+        gap: 15px;
+        padding: 15px;
+    }
+}

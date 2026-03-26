@@ -1,0 +1,73 @@
+.product-card {
+  width: 270px;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+}
+.product-card__image {
+  width: 100%;
+  display: block;
+}
+.product-card__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+}
+.product-card__title {
+  margin: 0 0 10px;
+  font-size: 1.4rem;
+  color: #2c3e50;
+}
+.product-card__description {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+.product-card__cost {
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+  color: #2d6900;
+}
+.product-card__btn {
+  padding: 10px 20px;
+  background-color: #e67e22;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.product-card__btn:hover {
+  background-color: rgb(191.3536585366, 101.3048780488, 21.6463414634);
+}
+.product-card__btn {
+  width: 100%;
+}
+@media (max-width: 360px) {
+  .product-card {
+    width: 100%;
+  }
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  justify-content: center;
+  padding: 20px;
+}
+@media (max-width: 768px) {
+  .product-grid {
+    gap: 15px;
+    padding: 15px;
+  }
+}
+
+/*# sourceMappingURL=main.css.map */
