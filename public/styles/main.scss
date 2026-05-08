@@ -79,7 +79,7 @@ $font-stack: 'Segoe UI', Tahoma, sans-serif;
 
 .product-grid {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: wrap; // Если следующей карточке не хватает места в текущем ряду, она автоматически перепрыгивает на новую строку.
     gap: 40px;
     justify-content: center;
     padding: 20px;
